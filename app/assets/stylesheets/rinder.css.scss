@@ -1,0 +1,96 @@
+.phone {
+  width: 316px;
+  height: 653px;
+  background: asset-url('web-assets.png') 0 0 no-repeat;
+  position: relative;
+  margin:auto;
+}
+
+.leaderboard, .nope-count, .like-count, .nope-number, .like-number {
+  display: inline;
+}
+
+.nav-container {
+  width: 250px;
+}
+
+.leader-nav a {
+  color: rgb(255, 114, 88);
+}
+
+.header {
+  color: #428bca;
+}
+
+.row {
+  margin-bottom: 5px;
+}
+
+@media (max-width: 767px) {
+  .leader-page .leaderboard-image img {
+    width: 240px;
+  }
+}
+
+.leader-page, .nav {
+  color: #d0d0d0;
+  font-family: 'Open Sans', sans-serif;
+  font-weight: bold;
+  font-size: 34px;
+}
+
+.nav {
+  position: absolute;
+  top: 81px;
+  left: 28px;
+  height: 40px;
+  width: 100px;
+}
+
+.pic-container {
+  position: relative;
+  top: 127px;
+  left: 7px;
+  width: 300px;
+  height: 333px;
+  overflow-x: hidden;
+  z-index: 5;
+}
+
+.like {
+  position: absolute;
+  top: 467px;
+  left: 180px;
+  width: 70px;
+  height: 70px;
+}
+
+.nope {
+  position: absolute;
+  top: 467px;
+  left: 69px;
+  width: 70px;
+  height: 70px;
+}
+
+.pic {
+  position: relative;
+  top: 50px;
+  overflow: hidden;
+}
+
+.animate-like,.animate-dislike,.animate-partial{
+  transition:all linear 0.3s;
+}
+.animate-partial.animate-like-partial {
+  transform: translateX(10%) rotate(5deg);
+}
+.animate-like {
+  transform: translateX(100%) rotate(60deg);
+}
+.animate-partial.animate-dislike-partial {
+  transform: translateX(-10%) rotate(-5deg);
+}
+.animate-dislike {
+  transform: translateX(-100%) rotate(-60deg);
+}

@@ -1,0 +1,15 @@
+.container.leader-page
+  .leader-nav
+    = link_to 'Rinder', root_path
+
+  .row.header
+    .score-header.col-xs-4
+      Score
+    .image-header.col-xs-8
+      Image
+  - @votes.each do |vote|
+    .row
+      .score.col-xs-4
+        = vote['count(up)']
+      .leaderboard-image.col-xs-8
+        = image_tag "/#{vote.image.path}"

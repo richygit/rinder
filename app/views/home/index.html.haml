@@ -1,0 +1,157 @@
+= form_tag('set_name') do
+  #myModal.modal.fade{"aria-hidden" => "true", "aria-labelledby" => "myModalLabel", role: "dialog", tabindex: "-1"}
+    .modal-dialog
+      .modal-content
+        .modal-header
+          %button.close{"data-dismiss" => "modal", type: "button"}
+          %h4#myModalLabel.modal-title What's your name?
+        .modal-body
+          = text_field_tag :name
+        .modal-footer
+          %button.btn.name-check.btn-primary{type: "button"} Submit
+
+.main
+  .phone
+    .nav
+      .nav-container
+        .leaderboard
+          = link_to(image_tag('icon_leaderboard.png'), leaderboard_path)
+        .nope-count
+          = image_tag 'nope.png'
+          .nope-number
+            20
+        .like-count
+          = image_tag 'like.png'
+          .like-number
+            44
+    .pic-container
+      #pic-elem.pic
+    %a{href:"#", class: 'nope'}=''
+    %a{href:"#", class: 'like'}=''
+
+
+:javascript
+  $(function() {
+    function getNextImage(userVote) {
+      $.ajax({
+        type: "GET",
+        data: { img: $(".image").attr("src"), vote: userVote },
+        url: 'next_image',
+        cache: false,
+        crossDomain: true,
+        dataType: 'json',
+        xhrFields: {
+            withCredentials: true
+        }
+      })
+      .done(function(data) {
+        if(data.image) {
+          addImage(data.image);
+        } else {
+          $('.pic').append('<div class="no-image">No more images</div>');
+        }
+        $('.nope-number').empty();
+        $('.nope-number').append(data.nopes);
+        $('.like-number').empty();
+        $('.like-number').append(data.likes);
+      })
+      .fail(function( jqXHR, textStatus ) {
+        alert( "Request failed: " + textStatus );
+      });
+    }
+
+    function downVote() {
+      $('.pic').removeClass("animate-like-partial");
+      $('.pic').removeClass("animate-partial");
+      $('.pic').removeClass("animate-dislike-partial");
+      $('.pic').addClass("animate-dislike");
+      setTimeout(function() {
+        getNextImage('down'); 
+        $('.pic').removeClass("animate-dislike");
+      }, 500);
+    }
+
+    function upVote() {
+      $('.pic').removeClass("animate-like-partial");
+      $('.pic').removeClass("animate-partial");
+      $('.pic').removeClass("animate-dislike-partial");
+      $('.pic').addClass("animate-like");
+      setTimeout(function() { 
+        getNextImage('up'); 
+        $('.pic').removeClass("animate-like");
+      }, 300);
+    }
+
+    function swipingRight() {
+        $('.pic').addClass("animate-like-partial");
+        $('.pic').addClass("animate-partial");
+        $('.pic').removeClass("animate-dislike-partial");
+    }
+
+    function swipingLeft() {
+      $('.pic').addClass("animate-dislike-partial");
+      $('.pic').addClass("animate-partial");
+      $('.pic').removeClass("animate-like-partial");
+    }
+
+    function swiping(event) {
+      var initX = 0;
+      if(event.iniTouch) {
+        initX = event.iniTouch.x;
+      }
+      var currentX = 0;
+      if(event.currentTouch) {
+        currentX = event.currentTouch.x;
+      }
+      /*
+      $('.name').empty();
+      $('.name').append("<div>delta x: " + (currentX - initX) + "</div>");
+      $('.name').append("<div>init x: " + (initX) + "</div>");
+      $('.name').append("<div>current x: " + (currentX ) + "</div>");
+      */
+      if(currentX > initX) {
+        swipingRight();
+      } else if(currentX == initX) {
+        $('.pic').removeClass("animate-like-partial");
+        $('.pic').removeClass("animate-partial");
+        $('.pic').removeClass("animate-dislike-partial");
+      } else {
+        swipingLeft();
+      }
+    }
+    $$('.pic').swiping(swiping);
+    //Swipe directions
+    $$('.pic').swipeLeft(downVote);
+    $$('.pic').swipeRight(upVote);
+
+    function addImage(src) {
+      $('.pic').empty();
+      $('.pic').append("<img class='image' src='" + src + "'>");
+    }
+
+    var knownUser = #{@known_user};
+    if (!knownUser) {
+      $('#myModal').modal();
+    } else {
+      getNextImage(null);
+    }
+    $(".modal-footer button").submit(function() {
+      $('#myModal').modal('toggle');
+    });
+
+    $('.nope').click(function(e) {
+      e.preventDefault();
+      swipingLeft();
+      setTimeout(function() {
+        downVote();
+      }, 300);
+    });
+
+    $('.like').click(function(e) {
+      e.preventDefault();
+      swipingRight();
+      setTimeout(function() {
+        upVote();
+      }, 300);
+    });
+  });
